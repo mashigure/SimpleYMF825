@@ -73,25 +73,25 @@ static void init_YMF825(int drv_sel)
     // IOVDD = 5V or 3.3V
     spi_write(29, (drv_sel & 0x01) );
     
-    spi_write( 2, 0x0E ); // analog block power down (AP0)
+    spi_write( 2, 0x0E ); // The VREF is powered.
     delay(1);
     spi_write( 0, 0x01 ); // clock enable
     spi_write( 1, 0x00 ); // reset release
-    spi_write(26, 0xA3 ); // ??? (magic spell)
+    spi_write(26, 0xA3 ); // reset synthesizer block
     delay(1);
-    spi_write(26, 0x00 ); // ??? (magic spell)
+    spi_write(26, 0x00 ); // enable the synthesizer block
     delay(30);
-    spi_write( 2, 0x04 ); // analog block power down (AP1,AP3)
+    spi_write( 2, 0x04 ); // The power-down state of Audio Out is removed.
     delay(1);
-    spi_write( 2, 0x00 ); // analog block power down (AP2)
+    spi_write( 2, 0x00 ); // The power-down state of the Audio Out is removed.
     delay(1);
     
-    spi_write(25, 0xF0 ); // master volume = +9dB ((0x00<<2):mute`(0x3F<<2):+12dB)
+    spi_write(25, 0xF0 ); // master volume = +9dB ((0x00<<2):muted ... (0x3F<<2):+12dB)
     spi_write(27, 0x3F ); // interpolation max
     spi_write(20, 0x00 ); // interpolation on
     spi_write( 3, 0x01 ); // analog gain = 6.5dB(default) (0:5dB, 1:6.5dB, 2:7dB, 3:7.5dB)
     
-    spi_write( 8, 0xF6 ); // sequencer setting (magic spell)
+    spi_write( 8, 0xF6 ); // reset sequencer setting
     delay(21);
     spi_write( 8, 0x00 ); // sequencer reset release
     
@@ -210,7 +210,7 @@ void SimpleYMF825::begin(int drv_sel)
 // key on
 // ch: channel number
 // octave: 1...8 (Middle C belongs to octave 4)
-// key: KEY_C ... KEY_B_SHARP
+// key: KEY_C ... KEY_B
 // vol: volume
 //      0: mute
 //      1...31: -47.9dB...0dB
@@ -233,7 +233,7 @@ void SimpleYMF825::keyon(int ch, int octave, int key, int vol)
 // key on
 // ch: channel number
 // octave: 1...8 (Middle C belongs to octave 4)
-// key: KEY_C ... KEY_B_SHARP
+// key: KEY_C ... KEY_B
 void SimpleYMF825::keyon(int ch, int octave, int key)
 {
     // channnel select
@@ -271,7 +271,7 @@ void SimpleYMF825::setTone(int ch, int tone)
 // set key
 // ch: channel number
 // octave: 1...8 (Middle C belongs to octave 4)
-// key: KEY_C ... KEY_B_SHARP
+// key: KEY_C ... KEY_B
 void SimpleYMF825::setKey(int ch, int octave, int key)
 {
     // channnel select
